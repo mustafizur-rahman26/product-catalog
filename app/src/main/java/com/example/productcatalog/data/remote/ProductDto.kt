@@ -26,6 +26,24 @@ data class ProductDto(
     @SerialName("title")
     val title: String,
 
+    @SerialName("price")
+    val price: Double,
+
+    @SerialName("brand")
+    val brand: String? = null,
+
+    @SerialName("thumbnail")
+    val thumbnail: String
+)
+
+@Serializable
+data class ProductDetailDto(
+    @SerialName("id")
+    val id: Int,
+
+    @SerialName("title")
+    val title: String,
+
     @SerialName("description")
     val description: String? = null,
 
@@ -39,8 +57,8 @@ data class ProductDto(
     val brand: String? = null,
 
     @SerialName("thumbnail")
-    val thumbnail: String? = null,
+    val thumbnail: String,
     
     @SerialName("images")
-    val images: List<String> = emptyList()
+    val images: List<String>
 )

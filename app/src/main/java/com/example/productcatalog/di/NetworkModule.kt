@@ -2,8 +2,8 @@ package com.example.productcatalog.di
 
 import com.example.productcatalog.BuildConfig
 import com.example.productcatalog.data.remote.ApiService
-import com.example.productcatalog.data.repository.ProductsRepositoryImpl
-import com.example.productcatalog.domain.repository.ProductsRepository
+import com.example.productcatalog.data.repository.ProductRepositoryImpl
+import com.example.productcatalog.domain.repository.ProductRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +50,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesRepository(repositoryImpl: ProductsRepositoryImpl): ProductsRepository = repositoryImpl
+    fun providesProductRepository(repositoryImpl: ProductRepositoryImpl): ProductRepository = repositoryImpl
 }

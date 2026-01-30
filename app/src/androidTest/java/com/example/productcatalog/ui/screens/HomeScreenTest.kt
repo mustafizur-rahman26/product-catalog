@@ -1,9 +1,10 @@
 package com.example.productcatalog.ui.screens
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.productcatalog.domain.model.Product
+import com.example.productcatalog.ui.products.ProductsContent
+import com.example.productcatalog.ui.products.UiState
 import com.example.productcatalog.ui.theme.HmcodetestTheme
 import org.junit.Rule
 import org.junit.Test

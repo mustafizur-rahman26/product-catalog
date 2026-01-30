@@ -3,6 +3,8 @@ package com.example.productcatalog.ui.screens
 import com.example.productcatalog.domain.model.PaginatedProducts
 import com.example.productcatalog.domain.model.Product
 import com.example.productcatalog.domain.repository.ProductsRepository
+import com.example.productcatalog.ui.products.ProductsViewModel
+import com.example.productcatalog.ui.products.UiState
 import com.example.productcatalog.util.Async
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse

@@ -1,6 +1,7 @@
 package com.example.productcatalog.data.remote
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -10,4 +11,9 @@ interface ApiService {
         @Query("limit") limit: Int = 30,
         @Query("skip") skip: Int = 0
     ): ProductsResponseDto
+
+    @GET("products/{id}")
+    suspend fun getProductById(
+        @Path("id") id: Int
+    ): ProductDetailDto
 }

@@ -1,8 +1,8 @@
-package com.example.productcatalog.ui.screens
+package com.example.productcatalog.ui.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.productcatalog.domain.repository.ProductsRepository
+import com.example.productcatalog.domain.repository.ProductRepository
 import com.example.productcatalog.domain.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -26,7 +26,7 @@ data class UiState(
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -67,7 +67,7 @@ class ProductsViewModel @Inject constructor(
 
 
     private suspend fun loadProducts(page: Int) {
-        productsRepository.getProducts(page = page)
+        productRepository.getProducts(page = page)
             .onSuccess { data ->
                 _uiState.update { currentUiState ->
                     currentUiState.copy(

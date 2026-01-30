@@ -1,14 +1,14 @@
-package com.example.productcatalog.ui.screens
+package com.example.productcatalog.ui.products
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +46,8 @@ import com.example.productcatalog.ui.theme.Dimensions
 
 @Composable
 fun HomeScreen(
-    productsViewModel: ProductsViewModel = hiltViewModel()
+    productsViewModel: ProductsViewModel = hiltViewModel(),
+    onProductClick: (Int) -> Unit
 ) {
     val uiState by productsViewModel.uiState.collectAsStateWithLifecycle()
     val gridState = rememberLazyGridState()
@@ -55,7 +56,8 @@ fun HomeScreen(
         uiState = uiState,
         gridState = gridState,
         onLoadMore = { productsViewModel.loadMoreProducts() },
-        onRetryLoadMore = { productsViewModel.retryLoadProducts() }
+        onRetryLoadMore = { productsViewModel.retryLoadProducts() },
+        onProductClick = onProductClick
     )
 }
 
@@ -64,12 +66,13 @@ fun ProductsContent(
     uiState: UiState,
     gridState: LazyGridState = rememberLazyGridState(),
     onLoadMore: () -> Unit,
-    onRetryLoadMore: () -> Unit
+    onRetryLoadMore: () -> Unit,
+    onProductClick: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 40.dp)
+            .padding(vertical = 40.dp, horizontal = Dimensions.controlDoubleSpace)
     ) {
         when {
             uiState.isLoading -> {
@@ -127,11 +130,13 @@ fun ProductsContent(
                     modifier = Modifier.fillMaxSize(),
                     columns = GridCells.Fixed(2),
                     state = gridState,
-                    verticalArrangement = Arrangement.spacedBy(Dimensions.controlHalfSpace)
+                    verticalArrangement = Arrangement.spacedBy(Dimensions.controlSpace),
+                    horizontalArrangement = Arrangement.spacedBy(Dimensions.controlDoubleSpace)
                 ) {
-                    items(items = uiState.products, key = { it.id }) {
+                    items(items = uiState.products, key = { it.id }) { product ->
                         ProductGridItem(
-                            product = it
+                            product = product,
+                            onClick = { onProductClick(product.id) }
                         )
                     }
 
@@ -190,17 +195,26 @@ fun ProductsContent(
 
 @Composable
 private fun ProductGridItem(
-    product: Product
+    product: Product,
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.Start
     ) {
         // Product Image
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(0.75f),
+                .aspectRatio(0.75f)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = RoundedCornerShape(25.dp)
+                )
+                .clip(RoundedCornerShape(8.dp)),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(product.thumbnail)
                 .memoryCachePolicy(CachePolicy.ENABLED)
@@ -263,7 +277,8 @@ private fun ProductsContentPreview() {
                 errorMessage = null
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
@@ -279,7 +294,8 @@ private fun ProductsContentLoadingPreview() {
                 errorMessage = null
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
@@ -295,7 +311,8 @@ private fun ProductsContentErrorPreview() {
                 errorMessage = "Failed to load products"
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
@@ -311,7 +328,8 @@ private fun ProductsContentEmptyPreview() {
                 errorMessage = null
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
@@ -321,7 +339,8 @@ private fun ProductsContentEmptyPreview() {
 private fun ProductGridItemPreview() {
     MaterialTheme {
         ProductGridItem(
-            product = getSampleProducts().first()
+            product = getSampleProducts().first(),
+            onClick = {}
         )
     }
 }
@@ -331,7 +350,8 @@ private fun ProductGridItemPreview() {
 private fun ProductGridItemLargeFontPreview() {
     MaterialTheme {
         ProductGridItem(
-            product = getSampleProducts().first()
+            product = getSampleProducts().first(),
+            onClick = {}
         )
     }
 }
@@ -347,7 +367,8 @@ private fun ProductsContentLargeFontPreview() {
                 errorMessage = null
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
@@ -363,7 +384,8 @@ private fun ProductsContentErrorLargeFontPreview() {
                 errorMessage = "Failed to load products"
             ),
             onLoadMore = {},
-            onRetryLoadMore = {}
+            onRetryLoadMore = {},
+            onProductClick = {}
         )
     }
 }
