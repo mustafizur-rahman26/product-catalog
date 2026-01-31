@@ -10,8 +10,9 @@ import com.example.productcatalog.domain.model.ProductDetail
 import kotlin.math.ceil
 
 fun ProductsResponseDto.toPaginatedProducts(): PaginatedProducts {
-    val currentPage = (skip / limit) + 1
-    val totalPages = ceil(total.toDouble() / limit).toInt()
+    val safeLimit = if (limit <= 0) 1 else limit
+    val currentPage = (skip / safeLimit) + 1
+    val totalPages = ceil(total.toDouble() / safeLimit).toInt()
     
     return PaginatedProducts(
         products = this.products.map { it.toProduct() },

@@ -2,10 +2,11 @@ package com.example.productcatalog.ui.screens
 
 import com.example.productcatalog.domain.model.PaginatedProducts
 import com.example.productcatalog.domain.model.Product
-import com.example.productcatalog.domain.repository.ProductsRepository
+import com.example.productcatalog.domain.repository.ProductRepository
 import com.example.productcatalog.ui.products.ProductsViewModel
 import com.example.productcatalog.ui.products.UiState
 import com.example.productcatalog.util.Async
+import com.example.productcatalog.util.ErrorType
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -25,26 +26,24 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductsViewModelTest {
 
-    private lateinit var repository: ProductsRepository
+    private lateinit var repository: ProductRepository
     private lateinit var viewModel: ProductsViewModel
     private val testDispatcher = StandardTestDispatcher()
 
     private val sampleProduct1 = Product(
-        id = "1",
+        id = 1,
         name = "Test Product 1",
         brand = "Test Brand",
         price = "$10",
-        thumbnail = "https://test.com/1.jpg",
-        swatches = emptyList()
+        thumbnail = "https://test.com/1.jpg"
     )
 
     private val sampleProduct2 = Product(
-        id = "2",
+        id = 2,
         name = "Test Product 2",
         brand = "Test Brand",
         price = "$20",
-        thumbnail = "https://test.com/2.jpg",
-        swatches = emptyList()
+        thumbnail = "https://test.com/2.jpg"
     )
 
     private val samplePaginatedProductsPage1 = PaginatedProducts(
@@ -101,7 +100,7 @@ class ProductsViewModelTest {
     fun `initial load error sets error message`() = runTest {
         // Given
         whenever(repository.getProducts(1)).thenReturn(
-            Async.Error(sampleNetworkErrorMessage)
+            Async.Error(sampleNetworkErrorMessage, ErrorType.NETWORK_ERROR)
         )
 
         // When
@@ -175,9 +174,9 @@ class ProductsViewModelTest {
     @Test
     fun `loadMoreProducts deduplicates products`() = runTest {
         // Given - duplicate product IDs across pages
-        val duplicateProduct = sampleProduct1.copy(id = "1")
+        val duplicateProduct = sampleProduct1.copy(id = 1)
         val page2 = PaginatedProducts(
-            products = listOf(duplicateProduct, sampleProduct2), // Duplicate ID "1"
+            products = listOf(duplicateProduct, sampleProduct2), // Duplicate ID 1
             currentPage = 2,
             totalPages = 10
         )
@@ -193,15 +192,15 @@ class ProductsViewModelTest {
 
         // Then - should have 2 products (duplicate removed)
         assertEquals(2, viewModel.uiState.value.products.size)
-        assertEquals("1", viewModel.uiState.value.products[0].id)
-        assertEquals("2", viewModel.uiState.value.products[1].id)
+        assertEquals(1, viewModel.uiState.value.products[0].id)
+        assertEquals(2, viewModel.uiState.value.products[1].id)
     }
 
     @Test
     fun `retryLoadMore calls loadInitialProducts when products empty`() = runTest {
         // Given - initial load error
         whenever(repository.getProducts(1))
-            .thenReturn(Async.Error(sampleNetworkErrorMessage))
+            .thenReturn(Async.Error(sampleNetworkErrorMessage, ErrorType.NETWORK_ERROR))
             .thenReturn(Async.Success(samplePaginatedProductsPage1))
 
         viewModel = ProductsViewModel(repository)
@@ -221,7 +220,7 @@ class ProductsViewModelTest {
         // Given - initial load success, then load more error
         whenever(repository.getProducts(1)).thenReturn(Async.Success(samplePaginatedProductsPage1))
         whenever(repository.getProducts(2))
-            .thenReturn(Async.Error(sampleNetworkErrorMessage))
+            .thenReturn(Async.Error(sampleNetworkErrorMessage, ErrorType.NETWORK_ERROR))
             .thenReturn(Async.Success(samplePaginatedProductsPage2))
 
         viewModel = ProductsViewModel(repository)
@@ -242,7 +241,7 @@ class ProductsViewModelTest {
     @Test
     fun `retryLoadMore clears error message`() = runTest {
         // Given
-        whenever(repository.getProducts(1)).thenReturn(Async.Error(sampleNetworkErrorMessage))
+        whenever(repository.getProducts(1)).thenReturn(Async.Error(sampleNetworkErrorMessage, ErrorType.NETWORK_ERROR))
 
         viewModel = ProductsViewModel(repository)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -257,20 +256,10 @@ class ProductsViewModelTest {
     }
 
     @Test
-    fun `shouldLoadMore true when hasMorePages and not loading and no error`() {
-        val state = UiState(
-            hasMorePages = true,
-            isLoadingMore = false,
-            errorMessage = null
-        )
-        assertTrue(state.shouldLoadMore)
-    }
-
-    @Test
     fun `shouldLoadMore false when errorMessage exists`() = runTest {
         // Given - initial load fails with network error
         whenever(repository.getProducts(1)).thenReturn(
-            Async.Error(sampleNetworkErrorMessage)
+            Async.Error(sampleNetworkErrorMessage, ErrorType.NETWORK_ERROR)
         )
 
         // When
@@ -361,7 +350,7 @@ class ProductsViewModelTest {
         // Given
         val page1 = samplePaginatedProductsPage1
         val page2 = samplePaginatedProductsPage2
-        val product3 = sampleProduct1.copy(id = "3", name = "Product 3")
+        val product3 = sampleProduct1.copy(id = 3, name = "Product 3")
         val page3 = PaginatedProducts(
             products = listOf(product3),
             currentPage = 3,

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "hmcodetest"
+rootProject.name = "productcatalog"
 include(":app")
  
