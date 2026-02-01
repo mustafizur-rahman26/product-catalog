@@ -1,20 +1,28 @@
-# H&M Product Catalog - Android Application
+# Product Catalog - Android Application
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-blue.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-2025.12.00-brightgreen.svg)](https://developer.android.com/jetpack/compose)
 [![Min API](https://img.shields.io/badge/API-24%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A modern Android application showcasing H&M product catalog with infinite scroll pagination, built using Kotlin and Jetpack Compose.
+A modern Android application showcasing a product catalog with infinite scroll pagination, built using Kotlin and Jetpack Compose.
+
+<div align="center">
+  <img src="screenshots/product_list.png" width="300" alt="Product List Screen"/>
+  <img src="screenshots/product_detail.png" width="300" alt="Product Detail Screen"/>
+</div>
+
+<p align="center">
+  <i>Product catalog with 2-column grid layout | Product detail view with images and description</i>
+</p>
 
 ## 📱 Features
 
 - **Product Catalog**: Browse products in a responsive 2-column grid layout
+- **Product Detail View**: Detailed product information with images, description, and pricing
+- **Navigation**: Seamless navigation from product list to detailed view
 - **Infinite Scroll**: Automatic pagination with load-more functionality
 - **Error Handling**: Comprehensive error states with retry mechanisms
-- **Accessibility**: Full screen reader support with semantic descriptions
-- **Scroll to Top**: Quick navigation FAB after page threshold
-- **Color Swatches**: Visual product color variants with overflow indicators
 - **Material 3**: Modern UI with Material Design 3 components
 
 ## 🏗️ Architecture
@@ -41,7 +49,7 @@ app/
 
 1. **Presentation Layer** (`ui/`)
    - Jetpack Compose UI
-   - ViewModels with StateFlow and SharedFlow
+   - ViewModels with StateFlow
    - UI State management
 
 2. **Domain Layer** (`domain/`)
@@ -65,7 +73,6 @@ app/
 
 ### Dependency Injection
 - **Dagger Hilt** 2.57.2 - Compile-time DI framework
-- **KSP** 2.3.3 - Kotlin Symbol Processing
 
 ### Networking
 - **Retrofit** 3.0.0 - Type-safe HTTP client
@@ -86,85 +93,27 @@ app/
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Android Studio Ladybug | 2024.2.1 or newer
-- JDK 17 or higher
-- Android SDK API 24+ (Android 7.0 Nougat)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/mustafizur-rahman26/HM-Android-code-test.git
-```
-
-2. Open the project in Android Studio
-
-3. Build the project:
-```bash
-./gradlew build
-```
-
-4. Run on device or emulator:
-```bash
-./gradlew installDebug
-```
-
 ### Configuration
 
-The app uses H&M API. The base URL is configured in `app/build.gradle.kts`:
+The app uses DummyJSON API for product data. The base URL is configured in `app/build.gradle.kts`:
 
 ```kotlin
-buildConfigField("String", "BASE_URL", "\"https://api.hm.com/\"")
-```
-
-## 📂 Project Structure
-
-```
-hmcodetest/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/example/hmcodetest/
-│   │   │   │   ├── data/
-│   │   │   │   │   ├── mapper/
-│   │   │   │   │   ├── remote/
-│   │   │   │   │   └── repository/
-│   │   │   │   ├── domain/
-│   │   │   │   │   ├── model/
-│   │   │   │   │   ├── pagination/
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   └── usecase/
-│   │   │   │   ├── ui/
-│   │   │   │   │   ├── screens/
-│   │   │   │   │   └── theme/
-│   │   │   │   ├── di/
-│   │   │   │   └── util/
-│   │   │   └── res/
-│   │   ├── test/              # Unit tests
-│   │   └── androidTest/       # Instrumented tests
-│   └── build.gradle.kts
-├── config/
-│   └── detekt/               # Detekt configuration
-├── gradle/
-│   └── libs.versions.toml    # Version catalog
-└── README.md
+val baseUrl = "https://dummyjson.com/"
+buildConfigField("String", "BASE_URL", "\"${baseUrl}\"")
 ```
 
 ## 🎨 UI Components
 
-### HomeScreen
+### ProductsScreen
 - **ProductsContent**: Main composable displaying product grid
-- **ProductGridItem**: Individual product card with image, brand, name, price, and swatches
-- **ColorSwatchesRow**: Visual color variant indicators
+- **ProductGridItem**: Individual product card with image, brand, name, and price
 - **Error States**: Empty state, initial error, and pagination error handling
 - **Loading States**: Initial loading and load-more indicators
-- **Scroll to Top FAB**: Appears after page 3
 
-### Accessibility Features
-- Semantic content descriptions for screen readers
-- Live regions for dynamic content updates
-- Minimum touch target sizes (48dp)
+### ProductDetailScreen
+- **Detailed Product View**: Full product information display
+- **Product Information**: Description, category, brand, and pricing
+- **Navigation**: Back navigation to product list
 
 ## 🔧 Key Implementation Details
 
@@ -202,16 +151,6 @@ data class UiState(
 - Follow [Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html)
 - Run Detekt before committing: `./gradlew detekt`
 - Ensure all tests pass: `./gradlew test connectedAndroidTest`
-
-## 📝 Code Quality
-
-The project uses Detekt for static code analysis:
-
-```bash
-./gradlew detekt
-```
-
-Configuration: `config/detekt/detekt.yml`
 
 ---
 
