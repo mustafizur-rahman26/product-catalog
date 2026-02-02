@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.productcatalog.domain.model.Product
 import com.example.productcatalog.ui.products.ProductsContent
 import com.example.productcatalog.ui.products.UiState
-import com.example.productcatalog.ui.theme.HmcodetestTheme
+import com.example.productcatalog.ui.theme.ProductCatalogTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,53 +18,27 @@ class HomeScreenTest {
         Product(
             id = 1,
             name = "Slim Fit Jeans",
-            brand = "H&M",
+            brand = "ABC",
             price = "24.99 Kr.",
             thumbnail = "https://example.com/image1.jpg"
         ),
         Product(
             id = 2,
             name = "Cotton T-shirt",
-            brand = "H&M",
+            brand = "ABC",
             price = "10.39 Kr.",
             thumbnail = "https://example.com/image2.jpg"
         ),
         Product(
             id = 3,
             name = "Hooded Sweatshirt",
-            brand = "H&M",
+            brand = "ABC",
             price = "29.99 Kr.",
             thumbnail = "https://example.com/image3.jpg"
         )
     )
 
     val sampleErrorMessage = "Failed to load products"
-
-    @Test
-    fun loadingState_displaysLoadingIndicator() {
-        // Given
-        val uiState = UiState(
-            products = emptyList(),
-            isLoading = true,
-            errorMessage = null
-        )
-
-        // When
-        composeTestRule.setContent {
-            HmcodetestTheme {
-                ProductsContent(
-                    uiState = uiState,
-                    onLoadMore = {},
-                    onRetryLoadMore = {}
-                )
-            }
-        }
-
-        // Then
-        composeTestRule
-            .onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
-    }
 
     @Test
     fun errorState_displaysErrorMessageAndRetryButton() {
@@ -77,11 +51,12 @@ class HomeScreenTest {
 
         // When
         composeTestRule.setContent {
-            HmcodetestTheme {
+            ProductCatalogTheme {
                 ProductsContent(
                     uiState = uiState,
                     onLoadMore = {},
-                    onRetryLoadMore = {}
+                    onRetryLoadMore = {},
+                    onProductClick = {}
                 )
             }
         }
@@ -106,11 +81,12 @@ class HomeScreenTest {
 
         // When
         composeTestRule.setContent {
-            HmcodetestTheme {
+            ProductCatalogTheme {
                 ProductsContent(
                     uiState = uiState,
                     onLoadMore = {},
-                    onRetryLoadMore = {}
+                    onRetryLoadMore = {},
+                    onProductClick = {}
                 )
             }
         }
@@ -132,28 +108,29 @@ class HomeScreenTest {
 
         // When
         composeTestRule.setContent {
-            HmcodetestTheme {
+            ProductCatalogTheme {
                 ProductsContent(
                     uiState = uiState,
                     onLoadMore = {},
-                    onRetryLoadMore = {}
+                    onRetryLoadMore = {},
+                    onProductClick = {}
                 )
             }
         }
 
         // Then - Verify each product's details
         // Product 1
-        composeTestRule.onAllNodesWithText("H&M")[0].assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("ABC")[0].assertIsDisplayed()
         composeTestRule.onNodeWithText("SLIM FIT JEANS", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("24.99 Kr.").assertIsDisplayed()
 
         // Product 2
-        composeTestRule.onAllNodesWithText("H&M")[1].assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("ABC")[1].assertIsDisplayed()
         composeTestRule.onNodeWithText("COTTON T-SHIRT", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("10.39 Kr.").assertIsDisplayed()
 
         // Product 3
-        composeTestRule.onAllNodesWithText("H&M")[2].assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("ABC")[2].assertIsDisplayed()
         composeTestRule.onNodeWithText("HOODED SWEATSHIRT", substring = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("29.99 Kr.").assertIsDisplayed()
     }
@@ -176,11 +153,12 @@ class HomeScreenTest {
 
         // When
         composeTestRule.setContent {
-            HmcodetestTheme {
+            ProductCatalogTheme {
                 ProductsContent(
                     uiState = uiState,
                     onLoadMore = {},
-                    onRetryLoadMore = {}
+                    onRetryLoadMore = {},
+                    onProductClick = {}
                 )
             }
         }

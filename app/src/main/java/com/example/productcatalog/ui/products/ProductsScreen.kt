@@ -395,29 +395,29 @@ private fun getSampleProducts() = listOf(
     Product(
         id = 685816001,
         name = "Slim Fit Jeans",
-        brand = "H&M",
+        brand = "Some",
         price = "$24.99",
-        thumbnail = "https://image.hm.com/assets/hm/e9/c7/e9c7f0e4d8f1c8b8e4f8b8c7e4f8b8c7.jpg",
+        thumbnail = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
     ),
     Product(
         id = 714026050,
         name = "Cotton T-shirt",
-        brand = "H&M",
+        brand = "ABC",
         price = "$10.39",
-        thumbnail = "https://image.hm.com/assets/hm/c8/7e/c87ef0e4d8f1c8b8e4f8b8c7e4f8b8c7.jpg",
+        thumbnail = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
     ),
     Product(
         id = 970819001,
         name = "Hooded Sweatshirt",
-        brand = "H&M",
+        brand = "ABC",
         price = "$29.99",
-        thumbnail = "https://image.hm.com/assets/hm/a1/2f/a12ff0e4d8f1c8b8e4f8b8c7e4f8b8c7.jpg",
+        thumbnail = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
     ),
     Product(
         id = 608945015,
         name = "Relaxed Fit Hoodie",
-        brand = "H&M",
+        brand = "ABC",
         price = "$24.49",
-        thumbnail = "https://image.hm.com/assets/hm/f3/4b/f34bf0e4d8f1c8b8e4f8b8c7e4f8b8c7.jpg",
+        thumbnail = "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp∫",
     )
 )

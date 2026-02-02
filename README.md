@@ -3,7 +3,6 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-blue.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-2025.12.00-brightgreen.svg)](https://developer.android.com/jetpack/compose)
 [![Min API](https://img.shields.io/badge/API-24%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=24)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A modern Android application showcasing a product catalog with infinite scroll pagination, built using Kotlin and Jetpack Compose.
 
@@ -23,7 +22,6 @@ A modern Android application showcasing a product catalog with infinite scroll p
 - **Navigation**: Seamless navigation from product list to detailed view
 - **Infinite Scroll**: Automatic pagination with load-more functionality
 - **Error Handling**: Comprehensive error states with retry mechanisms
-- **Material 3**: Modern UI with Material Design 3 components
 
 ## 🏗️ Architecture
 
@@ -48,19 +46,149 @@ app/
 ### Architecture Layers
 
 1. **Presentation Layer** (`ui/`)
-   - Jetpack Compose UI
-   - ViewModels with StateFlow
-   - UI State management
+
+
+
+   ```
+   ┌──────────────────────────────────────────────────────────────────┐
+   │                   PRESENTATION LAYER (MVVM)                      │
+   ├──────────────────────────────────────────────────────────────────┤
+   │                                                                  │
+   │  ┌───────────────────┐  observes   ┌────────────────────────┐    │
+   │  │     Screens       │ ◄────────── │      ViewModels        │    │
+   │  │   (Composables)   │             │    (State mgmt)        │    │
+   │  │                   │  triggers   │                        │    │
+   │  │ - ProductList     │ ──────────► │ - ProductsViewModel    │    │
+   │  │   Screen          │             │ - ProductDetail        │    │
+   │  │ - ProductDetail   │             │   ViewModel            │    │
+   │  │   Screen          │             │                        │    │
+   │  └───────────────────┘             └───────────┬────────────┘    │
+   │                                                │                 │
+   │                                   exposes      │ StateFlow       │
+   │                                                ▼                 │
+   │                                   ┌─────────────────┐            │
+   │                                   │    UiState      │            │
+   │                                   │                 │            │
+   │                                   │  products       │            │
+   │                                   │  isLoading      │            │
+   │                                   │  isLoadingMore  │            │
+   │                                   │  errorMessage   │            │
+   │                                   │  hasMorePages   │            │
+   │                                   │  currentPage    │            │
+   │                                   └─────────────────┘            │
+   │                                                                  │
+   │  ┌─────────────────────────────────────────────────────────────┐ │
+   │  │  Theme — Material 3 Colors & Typography                     │ │
+   │  └─────────────────────────────────────────────────────────────┘ │
+   └──────────────────────────────────────────────────────────────────┘
+   ```
+
+   ```kotlin
+    data class UiState(
+        val products: List<Product> = emptyList(),
+        val isLoading: Boolean = false, // Fullscreen loading
+        val isLoadingMore: Boolean = false, // Pagination loading at bottom
+        val errorMessage: String? = null,
+        val hasMorePages: Boolean = true,
+        val currentPage: Int = 0
+    )
+    ```
 
 2. **Domain Layer** (`domain/`)
-   - Domain models
-   - Repository interfaces
+
+
+   ```
+   ┌─────────────────────────────────────────────────────────────────┐
+   │                     DOMAIN LAYER                                │
+   ├─────────────────────────────────────────────────────────────────┤
+   │                                                                 │
+   │  ┌────────────────────────────────────────────────────────┐     │
+   │  │           Repository Interfaces (Contracts)            │     │
+   │  │                                                        │     │
+   │  │  interface ProductRepository {                         │     │
+   │  │      suspend fun getProducts(page: Int): Async<...>    │     │
+   │  │      suspend fun getProductDetail(productId: Int): ..  │     │
+   │  │  }                                                     │     │
+   │  └───────────────────────────┬────────────────────────────┘     │
+   │                              │ defines                          │
+   │                              │ contracts                        │
+   │  ┌───────────────────────────▼────────────────────────────┐     │
+   │  │              Domain Models (Business Entities)         │     │
+   │  │                                                        │     │
+   │  │  Product (id, name, brand, price, thumbnail)           │     │
+   │  │  ProductDetail (description, category, images, ...)    │     │
+   │  │  PaginatedProducts (products, currentPage, ...)        │     │
+   │  └───────────────────────────┬────────────────────────────┘     │
+   │                              │ wraps                            │
+   │  ┌───────────────────────────▼─────────────────────────────┐    │
+   │  │              Async Result Wrapper                       │    │
+   │  │                                                         │    │
+   │  │  sealed interface Async<out T>                          │    │
+   │  │      - Success<T>(data: T)                              │    │
+   │  │      - Error(errorMessage: String, errorType: ErrorType)│    │
+   │  └─────────────────────────────────────────────────────────┘    │
+   │                                                                 │
+   └─────────────────────────────────────────────────────────────────┘
+   ```
 
 3. **Data Layer** (`data/`)
-   - Repository implementations
-   - API services
-   - Data mappers
-   - Network error handling
+
+
+   ```
+   ┌─────────────────────────────────────────────────────────────────┐
+   │                      DATA LAYER                                 │
+   ├─────────────────────────────────────────────────────────────────┤
+   │                                                                 │
+   │  ┌─────────────────────────────────────────────────────────┐    │
+   │  │          Repository Implementations                     │    │
+   │  │                                                         │    │
+   │  │  class ProductRepositoryImpl : ProductRepository {      │    │
+   │  │      - getProducts(page: Int)                           │    │
+   │  │      - getProductDetail(productId: Int)                 │    │
+   │  │      - Error handling with runCatching                  │    │
+   │  │      - Executes on I/O dispatcher                       │    │
+   │  │  }                                                      │    │
+   │  └─────────────────────┬───────────────────────────────────┘    │
+   │                        │ uses                                   │
+   │  ┌─────────────────────▼─────────────────────────────────┐      │
+   │  │              Remote Layer (Network)                   │      │
+   │  │                                                       │      │
+   │  │  ApiService (Retrofit)                                │      │
+   │  │  - getProducts(limit, skip) → ProductsResponseDto     │      │
+   │  │  - getProductById(id) → ProductDetailDto              │      │
+   │  │                                                       │      │
+   │  │  DTOs (Data Transfer Objects)                         │      │
+   │  │  - ProductsResponseDto, ProductDto, ProductDetailDto  │      │
+   │  └─────────────────────┬─────────────────────────────────┘      │
+   │                        │ maps via                               │
+   │  ┌─────────────────────▼─────────────────────────────────┐      │
+   │  │              Mapper Layer                             │      │
+   │  │                                                       │      │
+   │  │  toPaginatedProducts()   DTO → Domain Model           │      │
+   │  │  toProduct()              DTO → Domain Model          │      │
+   │  │  toProductDetail()        DTO → Domain Model          │      │
+   │  │                                                       │      │
+   │  │  - Price formatting ($XX.XX)                          │      │
+   │  │  - Pagination calculation (currentPage, totalPages)   │      │
+   │  │  - Default value handling (brand ?: "Unknown")        │      │
+   │  └─────────────────────┬─────────────────────────────────┘      │
+   │                        │ returns                                │
+   │  ┌─────────────────────▼─────────────────────────────────┐      │
+   │  │         Async Result <Domain Model>                   │      │
+   │  │                                                       │      │
+   │  │  Success(data: PaginatedProducts)                     │      │
+   │  │  Error(errorMessage, errorType)                       │      │
+   │  └───────────────────────────────────────────────────────┘      │
+   │                                                                 │
+   │  ┌─────────────────────────────────────────────────────────┐    │
+   │  │  Error Handling                                         │    │
+   │  │  - Network exceptions → ErrorType (Network/...)         │    │
+   │  │  - HTTP errors → ErrorType (ServerError/...)            │    │
+   │  │  - Timeout/Unknown → ErrorType (UnknownError)           │    │
+   │  │  - Maps exceptions to user-friendly messages            │    │
+   │  └─────────────────────────────────────────────────────────┘    │
+   └─────────────────────────────────────────────────────────────────┘
+   ```
 
 ## 🛠️ Tech Stack
 
@@ -91,9 +219,7 @@ app/
 ### Code Quality
 - **Detekt** 1.23.8 - Static code analysis
 
-## 🚀 Getting Started
-
-### Configuration
+## Mock Server API
 
 The app uses DummyJSON API for product data. The base URL is configured in `app/build.gradle.kts`:
 
@@ -101,19 +227,6 @@ The app uses DummyJSON API for product data. The base URL is configured in `app/
 val baseUrl = "https://dummyjson.com/"
 buildConfigField("String", "BASE_URL", "\"${baseUrl}\"")
 ```
-
-## 🎨 UI Components
-
-### ProductsScreen
-- **ProductsContent**: Main composable displaying product grid
-- **ProductGridItem**: Individual product card with image, brand, name, and price
-- **Error States**: Empty state, initial error, and pagination error handling
-- **Loading States**: Initial loading and load-more indicators
-
-### ProductDetailScreen
-- **Detailed Product View**: Full product information display
-- **Product Information**: Description, category, brand, and pricing
-- **Navigation**: Back navigation to product list
 
 ## 🔧 Key Implementation Details
 
@@ -127,20 +240,7 @@ buildConfigField("String", "BASE_URL", "\"${baseUrl}\"")
 - Comprehensive network error mapping
 - User-friendly error messages
 - Retry functionality for both initial and pagination errors
-- Error state preservation during retry
 
-### State Management
-```kotlin
-data class UiState(
-    val products: List<Product> = emptyList(),
-    val isLoading: Boolean = false,
-    val isLoadingMore: Boolean = false,
-    val errorMessage: String? = null,
-    val hasMorePages: Boolean = true,
-    val currentPage: Int = 0,
-    val nextPage: Int? = null
-)
-```
 
 ### Image Optimization
 - Memory, disk, and network caching with Coil

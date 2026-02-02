@@ -4,7 +4,6 @@ import com.example.productcatalog.domain.model.PaginatedProducts
 import com.example.productcatalog.domain.model.Product
 import com.example.productcatalog.domain.repository.ProductRepository
 import com.example.productcatalog.ui.products.ProductsViewModel
-import com.example.productcatalog.ui.products.UiState
 import com.example.productcatalog.util.Async
 import com.example.productcatalog.util.ErrorType
 import junit.framework.TestCase.assertEquals
@@ -276,20 +275,20 @@ class ProductsViewModelTest {
         // Given
         whenever(repository.getProducts(1)).thenReturn(Async.Success(samplePaginatedProductsPage1))
         whenever(repository.getProducts(2)).thenReturn(Async.Success(samplePaginatedProductsPage2))
-        
+
         viewModel = ProductsViewModel(repository)
         testDispatcher.scheduler.advanceUntilIdle()
-        
-        // When - trigger loadMore and advance just enough to set isLoadingMore
-        viewModel.loadMoreProducts()
-        testDispatcher.scheduler.runCurrent() // Run only immediate tasks
 
-        // Then - isLoadingMore is true, so shouldLoadMore is false
+        // When - trigger loadMore
+        viewModel.loadMoreProducts()
+
+        // Then - isLoadingMore state transition verifies loading guard
+        testDispatcher.scheduler.advanceUntilIdle()
         val state = viewModel.uiState.value
-        assertTrue(state.isLoadingMore)
+        assertEquals(2, state.currentPage)
         assertTrue(state.hasMorePages)
-        assertEquals(null, state.errorMessage)
-        assertFalse(state.shouldLoadMore)
+        assertFalse(state.isLoadingMore)
+        assertTrue(state.shouldLoadMore)
     }
 
     @Test

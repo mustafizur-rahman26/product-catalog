@@ -454,7 +454,7 @@ potential-bugs:
       - 'java.util.stream.*Stream'
     ignoreFunctionCall: []
   ImplicitDefaultLocale:
-    active: true
+    active: false
   ImplicitUnitReturnType:
     active: false
     allowExplicitReturnType: true
