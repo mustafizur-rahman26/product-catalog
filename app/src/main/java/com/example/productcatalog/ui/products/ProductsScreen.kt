@@ -45,7 +45,7 @@ import com.example.productcatalog.domain.model.Product
 import com.example.productcatalog.ui.theme.Dimensions
 
 @Composable
-fun HomeScreen(
+fun ProductsScreen(
     productsViewModel: ProductsViewModel = hiltViewModel(),
     onProductClick: (Int) -> Unit
 ) {

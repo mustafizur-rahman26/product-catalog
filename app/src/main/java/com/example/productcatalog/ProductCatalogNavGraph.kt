@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.productcatalog.ui.productDetails.ProductDetailScreen
-import com.example.productcatalog.ui.products.HomeScreen
+import com.example.productcatalog.ui.products.ProductsScreen
 
 @Composable
 fun ProductCatalogNavGraph(
@@ -22,7 +22,7 @@ fun ProductCatalogNavGraph(
         modifier = modifier
     ) {
         composable(route = Screen.Products.route) {
-            HomeScreen(
+            ProductsScreen(
                 onProductClick = { productId ->
                     navController.navigate(Screen.ProductDetail.createRoute(productId))
                 }

@@ -37,7 +37,8 @@ app/
 │   ├── model/           # Business models
 │   └── repository/      # Repository interfaces
 ├── ui/
-│   ├── screens/         # Composable screens and ViewModels
+│   ├── productDetails/  # Product detail screen and ViewModel
+│   ├── products/        # Products list screen and ViewModel
 │   └── theme/           # Material 3 theming
 ├── di/                  # Dependency injection modules
 └── util/                # Utility classes and extensions

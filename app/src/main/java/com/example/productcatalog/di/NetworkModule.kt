@@ -4,6 +4,7 @@ import com.example.productcatalog.BuildConfig
 import com.example.productcatalog.data.remote.ApiService
 import com.example.productcatalog.data.repository.ProductRepositoryImpl
 import com.example.productcatalog.domain.repository.ProductRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
